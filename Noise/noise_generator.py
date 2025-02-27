@@ -5,7 +5,7 @@ import numpy as np
 class NoiseGenerator:
     @staticmethod
     def generate_perlin_noise(shape, scale, seed, octaves, persistence, lacunarity):
-        """Генерирует карту шума Перлина с заданными параметрами"""
+        """Р“РµРЅРµСЂРёСЂСѓРµС‚ РєР°СЂС‚Сѓ С€СѓРјР° РџРµСЂР»РёРЅР° СЃ Р·Р°РґР°РЅРЅС‹РјРё РїР°СЂР°РјРµС‚СЂР°РјРё"""
         world = np.zeros(shape)
         for i in range(shape[0]):
             for j in range(shape[1]):
@@ -19,13 +19,13 @@ class NoiseGenerator:
 
     @staticmethod
     def apply_height_map(noise_map, sea_level=0):
-        """Преобразует карту шума в карту высот с водой"""
+        """РџСЂРµРѕР±СЂР°Р·СѓРµС‚ РєР°СЂС‚Сѓ С€СѓРјР° РІ РєР°СЂС‚Сѓ РІС‹СЃРѕС‚ СЃ РІРѕРґРѕР№"""
         terrain = np.copy(noise_map)
         terrain[terrain < sea_level] = sea_level
         return terrain
 
     @staticmethod
     def create_temperature_map(height_map, base_temp=20):
-        """Создает карту температур на основе высоты"""
+        """РЎРѕР·РґР°РµС‚ РєР°СЂС‚Сѓ С‚РµРјРїРµСЂР°С‚СѓСЂ РЅР° РѕСЃРЅРѕРІРµ РІС‹СЃРѕС‚С‹"""
         temp_map = base_temp - (height_map * 20)
         return temp_map 
