@@ -15,7 +15,7 @@
 
 1. Клонируйте репозиторий:
 ```bash
-git clone https://github.com/your-username/PerlinNoiseGen.git
+git clone https://github.com/dmitrym1309/PerlinNoiseGenerator.git
 cd PerlinNoiseGen
 ```
 
