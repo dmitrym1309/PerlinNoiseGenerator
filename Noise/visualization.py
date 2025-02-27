@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -7,14 +8,14 @@ class MapVisualizer:
         self.fig = figure
         
     def plot_2d(self, data, title):
-        """РћС‚РѕР±СЂР°Р¶РµРЅРёРµ 2D РєР°СЂС‚С‹"""
+        """Отображение 2D карты"""
         ax = self.fig.add_subplot(111)
         im = ax.imshow(data, cmap='terrain')
         ax.set_title(title)
         return im
         
     def plot_3d(self, data, shape, step, rcount, title):
-        """РћС‚РѕР±СЂР°Р¶РµРЅРёРµ 3D РєР°СЂС‚С‹"""
+        """Отображение 3D карты"""
         ax = self.fig.add_subplot(111, projection='3d')
         x, y = np.meshgrid(np.linspace(0, shape[0]-1, shape[0]//step),
                           np.linspace(0, shape[1]-1, shape[1]//step))
@@ -33,7 +34,7 @@ class MapVisualizer:
         ax.set_box_aspect([1, 1, 0.5])
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
-        ax.set_zlabel('Р’С‹СЃРѕС‚Р°')
+        ax.set_zlabel('Высота')
         
         ax.set_xlim(0, shape[0])
         ax.set_ylim(0, shape[1])

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -6,11 +7,12 @@ import os
 from datetime import datetime
 from noise_generator import NoiseGenerator
 from visualization import MapVisualizer
+from config import DEFAULT_SETTINGS, QUALITY_SETTINGS
 
 class PerlinNoiseGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Р“РµРЅРµСЂР°С‚РѕСЂ РєР°СЂС‚ РЅР° РѕСЃРЅРѕРІРµ С€СѓРјР° РџРµСЂР»РёРЅР° v1.0")
+        self.root.title("Генератор карт на основе шума Перлина v1.1")
         
         self.setup_save_directory()
         self.initialize_variables()
@@ -24,32 +26,32 @@ class PerlinNoiseGUI:
             os.makedirs(self.save_dir)
     
     def initialize_variables(self):
-        self.size = tk.IntVar(value=100)
-        self.scale = tk.DoubleVar(value=50.0)
-        self.seed = tk.IntVar(value=10)
-        self.octaves = tk.IntVar(value=6)
-        self.persistence = tk.DoubleVar(value=0.5)
-        self.lacunarity = tk.DoubleVar(value=2.0)
-        self.sea_level = tk.DoubleVar(value=0.0)
-        self.map_type = tk.StringVar(value='noise')
-        self.view_type = tk.StringVar(value='2d')
-        self.quality_3d = tk.StringVar(value='medium')
+        self.size = tk.IntVar(value=DEFAULT_SETTINGS['size'])
+        self.scale = tk.DoubleVar(value=DEFAULT_SETTINGS['scale'])
+        self.seed = tk.IntVar(value=DEFAULT_SETTINGS['seed'])
+        self.octaves = tk.IntVar(value=DEFAULT_SETTINGS['octaves'])
+        self.persistence = tk.DoubleVar(value=DEFAULT_SETTINGS['persistence'])
+        self.lacunarity = tk.DoubleVar(value=DEFAULT_SETTINGS['lacunarity'])
+        self.sea_level = tk.DoubleVar(value=DEFAULT_SETTINGS['sea_level'])
+        self.map_type = tk.StringVar(value=DEFAULT_SETTINGS['map_type'])
+        self.view_type = tk.StringVar(value=DEFAULT_SETTINGS['view_type'])
+        self.quality_3d = tk.StringVar(value=DEFAULT_SETTINGS['quality_3d'])
     
     def create_gui(self):
         self.create_control_frame()
         self.create_menu()
     
     def create_control_frame(self):
-        control_frame = ttk.LabelFrame(self.root, text="РџР°СЂР°РјРµС‚СЂС‹", padding="5")
+        control_frame = ttk.LabelFrame(self.root, text="Параметры", padding="5")
         control_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
         
         controls = [
-            ("Р Р°Р·РјРµСЂ:", self.size, "entry", {"width": 10}),
-            ("РњР°СЃС€С‚Р°Р±:", self.scale, "scale", {"from_": 1, "to": 100}),
+            ("Размер:", self.size, "entry", {"width": 10}),
+            ("Масштаб:", self.scale, "scale", {"from_": 1, "to": 100}),
             ("Seed:", self.seed, "entry", {"width": 10}),
-            ("РћРєС‚Р°РІС‹:", self.octaves, "scale", {"from_": 1, "to": 10}),
+            ("Октавы:", self.octaves, "scale", {"from_": 1, "to": 10}),
             ("Persistence:", self.persistence, "scale", {"from_": 0, "to": 1}),
-            ("РЈСЂРѕРІРµРЅСЊ РјРѕСЂСЏ:", self.sea_level, "scale", {"from_": -1, "to": 1}),
+            ("Уровень моря:", self.sea_level, "scale", {"from_": -1, "to": 1}),
         ]
         
         for i, (label, var, control_type, options) in enumerate(controls):
@@ -62,16 +64,16 @@ class PerlinNoiseGUI:
         self.add_map_type_selector(control_frame, len(controls))
         self.add_view_controls(control_frame, len(controls) + 1)
         
-        ttk.Button(control_frame, text="Р“РµРЅРµСЂРёСЂРѕРІР°С‚СЊ", command=self.generate_map).grid(
+        ttk.Button(control_frame, text="Генерировать", command=self.generate_map).grid(
             row=len(controls) + 3, column=0, columnspan=2, pady=10)
     
     def add_map_type_selector(self, parent, row):
-        ttk.Label(parent, text="РўРёРї РєР°СЂС‚С‹:").grid(row=row, column=0, sticky="w")
+        ttk.Label(parent, text="Тип карты:").grid(row=row, column=0, sticky="w")
         ttk.Combobox(parent, textvariable=self.map_type,
                     values=['noise', 'height', 'temperature']).grid(row=row, column=1, padx=5)
     
     def add_view_controls(self, parent, row):
-        ttk.Label(parent, text="Р’РёРґ:").grid(row=row, column=0, sticky="w")
+        ttk.Label(parent, text="Вид:").grid(row=row, column=0, sticky="w")
         view_frame = ttk.Frame(parent)
         view_frame.grid(row=row, column=1, sticky="w")
         
@@ -80,7 +82,7 @@ class PerlinNoiseGUI:
         ttk.Radiobutton(view_frame, text="3D", variable=self.view_type,
                        value='3d', command=self.generate_map).pack(side="left")
         
-        ttk.Label(parent, text="РљР°С‡РµСЃС‚РІРѕ 3D:").grid(row=row + 1, column=0, sticky="w")
+        ttk.Label(parent, text="Качество 3D:").grid(row=row + 1, column=0, sticky="w")
         quality_combo = ttk.Combobox(parent, textvariable=self.quality_3d,
                                    values=['low', 'medium', 'high'])
         quality_combo.grid(row=row + 1, column=1, padx=5)
@@ -91,14 +93,14 @@ class PerlinNoiseGUI:
         self.root.config(menu=menubar)
         
         file_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Р¤Р°Р№Р»", menu=file_menu)
-        file_menu.add_command(label="РЎРѕС…СЂР°РЅРёС‚СЊ РєР°СЂС‚Сѓ", command=self.save_map)
+        menubar.add_cascade(label="Файл", menu=file_menu)
+        file_menu.add_command(label="Сохранить карту", command=self.save_map)
         file_menu.add_separator()
-        file_menu.add_command(label="Р’С‹С…РѕРґ", command=self.root.quit)
+        file_menu.add_command(label="Выход", command=self.root.quit)
         
         help_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="РЎРїСЂР°РІРєР°", menu=help_menu)
-        help_menu.add_command(label="Рћ РїСЂРѕРіСЂР°РјРјРµ", command=self.show_about)
+        menubar.add_cascade(label="Справка", menu=help_menu)
+        help_menu.add_command(label="О программе", command=self.show_about)
     
     def setup_visualization(self):
         self.fig = plt.Figure(figsize=(8, 8))
@@ -111,12 +113,7 @@ class PerlinNoiseGUI:
         NavigationToolbar2Tk(self.canvas, toolbar_frame).update()
     
     def get_quality_params(self):
-        quality_settings = {
-            'low': (4, 25),
-            'medium': (2, 50),
-            'high': (1, 100)
-        }
-        return quality_settings.get(self.quality_3d.get(), (2, 50))
+        return QUALITY_SETTINGS.get(self.quality_3d.get(), QUALITY_SETTINGS['medium'])
     
     def generate_map(self):
         self.fig.clear()
@@ -133,13 +130,13 @@ class PerlinNoiseGUI:
         
         if self.map_type.get() == 'height':
             world = NoiseGenerator.apply_height_map(world, self.sea_level.get())
-            title = f'РљР°СЂС‚Р° РІС‹СЃРѕС‚ (sea_level={self.sea_level.get():.2f})'
+            title = f'Карта высот (sea_level={self.sea_level.get():.2f})'
         elif self.map_type.get() == 'temperature':
             height_map = NoiseGenerator.apply_height_map(world, self.sea_level.get())
             world = NoiseGenerator.create_temperature_map(height_map)
-            title = 'РљР°СЂС‚Р° С‚РµРјРїРµСЂР°С‚СѓСЂ'
+            title = 'Карта температур'
         else:
-            title = f'РЁСѓРј РџРµСЂР»РёРЅР° (seed={self.seed.get()}, scale={self.scale.get():.1f})'
+            title = f'Шум Перлина (seed={self.seed.get()}, scale={self.scale.get():.1f})'
         
         if self.view_type.get() == '3d':
             step, rcount = self.get_quality_params()
@@ -154,14 +151,14 @@ class PerlinNoiseGUI:
     def save_map(self):
         filename = f"map_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
         self.fig.savefig(os.path.join(self.save_dir, filename))
-        messagebox.showinfo("РЎРѕС…СЂР°РЅРµРЅРёРµ", f"РљР°СЂС‚Р° СЃРѕС…СЂР°РЅРµРЅР° РєР°Рє {filename}")
+        messagebox.showinfo("Сохранение", f"Карта сохранена как {filename}")
     
     def show_about(self):
-        messagebox.showinfo("Рћ РїСЂРѕРіСЂР°РјРјРµ",
-            "Р“РµРЅРµСЂР°С‚РѕСЂ РєР°СЂС‚ РЅР° РѕСЃРЅРѕРІРµ С€СѓРјР° РџРµСЂР»РёРЅР°\n"
-            "Р’РµСЂСЃРёСЏ 1.0\n\n"
-            "РџСЂРѕРіСЂР°РјРјР° РґР»СЏ РіРµРЅРµСЂР°С†РёРё Рё РІРёР·СѓР°Р»РёР·Р°С†РёРё РєР°СЂС‚\n"
-            "СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј Р°Р»РіРѕСЂРёС‚РјР° С€СѓРјР° РџРµСЂР»РёРЅР°")
+        messagebox.showinfo("О программе",
+            "Генератор карт на основе шума Перлина\n"
+            "Версия 1.1\n\n"
+            "Программа для генерации и визуализации карт\n"
+            "с использованием алгоритма шума Перлина")
 
 if __name__ == "__main__":
     root = tk.Tk()
