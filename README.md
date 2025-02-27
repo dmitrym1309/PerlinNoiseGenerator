@@ -36,15 +36,7 @@ python Noise/test.py
 python Noise/build.py
 ```
 
-## Скриншоты
-
-[Здесь будут скриншоты приложения]
-
 ## Требования
 
 - Python 3.6+
 - См. requirements.txt для списка зависимостей
-
-## Лицензия
-
-MIT 
