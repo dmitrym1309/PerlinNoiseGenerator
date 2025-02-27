@@ -6,7 +6,7 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Определяем пути к файлам
-main_file = os.path.join(current_dir, 'test.py')
+main_file = os.path.join(current_dir, 'main.py')
 readme_file = os.path.join(current_dir, 'README.txt')
 icon_path = os.path.join(current_dir, 'icon.ico')
 
@@ -25,6 +25,9 @@ params = [
     '--onefile',
     '--noconsole',
     '--clean',
+    # Добавляем все модули проекта
+    '--add-data=%s;.' % os.path.join(current_dir, 'noise_generator.py'),
+    '--add-data=%s;.' % os.path.join(current_dir, 'visualization.py'),
 ]
 
 # Добавляем README, если он существует
